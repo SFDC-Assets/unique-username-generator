@@ -9,6 +9,16 @@ var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Function to generate a random 9-character string
+function generateRandomString(length = 9) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
 // catch 404 and forward to error handler
 app.post('/unique', (req, res) => {
   const prefix = req.body.prefix;
@@ -18,7 +28,13 @@ app.post('/unique', (req, res) => {
       res.status(400).send(err);
       console.log("Error setting key: " + err);
     } else {
-      res.json({message: `${prefix}${value}@${domain}`});
+      // Generate the 9-character random string
+      const randomStr = generateRandomString();
+
+      // Prepend it to the incremented value
+      const finalValue = `${randomStr}${value}`;
+
+      res.json({ message: `${prefix}${finalValue}@${domain}` });
     }
   });
 
